@@ -153,7 +153,7 @@ export function addMessageBag(
   request: MessageRequest,
   numbers: string,
   message: string,
-  sender: string
+  sender: string,
 ): MessageRequest {
   const bag: MessageBag = {
     numbers,
@@ -177,10 +177,10 @@ export class MessageHistoryUtils {
    * Get all successfully delivered messages
    */
   static getDeliveredMessages(
-    response: MessageHistoryApiResponse
+    response: MessageHistoryApiResponse,
   ): MessageSent[] {
     return response.items.data.filter(
-      (msg) => msg.status === "DeliveredToTerminal"
+      (msg) => msg.status === "DeliveredToTerminal",
     );
   }
 
@@ -190,7 +190,7 @@ export class MessageHistoryUtils {
   static getFailedMessages(response: MessageHistoryApiResponse): MessageSent[] {
     return response.items.data.filter(
       (msg) =>
-        msg.status.includes("Blacklisted") || msg.status.includes("Invalid")
+        msg.status.includes("Blacklisted") || msg.status.includes("Invalid"),
     );
   }
 
@@ -199,7 +199,7 @@ export class MessageHistoryUtils {
    */
   static getMessagesByNumber(
     response: MessageHistoryApiResponse,
-    number: string
+    number: string,
   ): MessageSent[] {
     return response.items.data.filter((msg) => msg.number.includes(number));
   }
@@ -209,7 +209,7 @@ export class MessageHistoryUtils {
    */
   static getMessagesByStatus(
     response: MessageHistoryApiResponse,
-    status: string
+    status: string,
   ): MessageSent[] {
     return response.items.data.filter((msg) => msg.status === status);
   }

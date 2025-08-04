@@ -10,7 +10,7 @@
     "test": "vitest --config vitest.config.ts",
     "lint": "eslint . --ext .ts",
     "type:check": "tsc --noEmit",
-    "format:check": "prettier --check .",
+    "format:check": "prettier --check . --write",
     "prepare": "npm run build",
     "build:watch": "tsdown -w",
     "prepublishOnly": "npm run build",

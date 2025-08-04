@@ -31,7 +31,7 @@ export class UjumbeSmsError extends Error {
       code?: string;
       statusCode?: number;
       originalError?: unknown;
-    }
+    },
   ) {
     super(message);
     this.name = "UjumbeSmsError";
@@ -69,7 +69,7 @@ export function createNetworkError(error: unknown): UjumbeSmsError {
 export function createApiError(
   statusCode: number,
   code: string | undefined,
-  message: string
+  message: string,
 ): UjumbeSmsError {
   return new UjumbeSmsError(message, {
     statusCode,

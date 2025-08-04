@@ -112,7 +112,7 @@ export class UjumbeSmsClient {
       // Check if there are any message bags
       if (!request.data || request.data.length === 0) {
         throw createValidationError(
-          "Message request must contain at least one message bag"
+          "Message request must contain at least one message bag",
         );
       }
 
@@ -121,7 +121,7 @@ export class UjumbeSmsClient {
         request,
         {
           headers: this.getAuthHeaders(),
-        }
+        },
       );
 
       console.log({ data: JSON.stringify(response.data) });
@@ -145,7 +145,7 @@ export class UjumbeSmsClient {
         {},
         {
           headers: this.getAuthHeaders(),
-        }
+        },
       );
 
       return response.data;
@@ -167,7 +167,7 @@ export class UjumbeSmsClient {
         {},
         {
           headers: this.getAuthHeaders(),
-        }
+        },
       );
 
       return response.data;
@@ -187,7 +187,7 @@ export class UjumbeSmsClient {
   public async sendSingleMessage(
     numbers: string,
     message: string,
-    sender: string
+    sender: string,
   ): Promise<MessagingApiResponse> {
     const request = createMessageRequest();
     addMessageBag(request, numbers, message, sender);
@@ -216,7 +216,7 @@ export class UjumbeSmsClient {
     request: MessageRequest,
     numbers: string,
     message: string,
-    sender: string
+    sender: string,
   ): MessageRequest {
     return addMessageBag(request, numbers, message, sender);
   }

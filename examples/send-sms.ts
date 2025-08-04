@@ -21,7 +21,7 @@ async function main() {
     const singleResponse = await client.sendSingleMessage(
       "254xxxxxxxxx,254xxxxxxxxx",
       "Sent from UjumbeSMS TypeScript client!",
-      "UjumbeSMS"
+      "UjumbeSMS",
     );
 
     console.log("Single message response:", singleResponse);
@@ -34,7 +34,7 @@ async function main() {
       request,
       "254712345678",
       "Sent from UjumbeSMS TypeScript client [Message Bags Test]",
-      "UjumbeSMS"
+      "UjumbeSMS",
     );
 
     // Add second message bag with different content
@@ -42,7 +42,7 @@ async function main() {
       request,
       "254712345678,254798765432",
       "Sent from UjumbeSMS TypeScript client [Message Bags Test]",
-      "UjumbeSMS"
+      "UjumbeSMS",
     );
 
     const multiResponse = await client.sendMessages(request);
@@ -54,7 +54,7 @@ async function main() {
       customRequest,
       "2547XXXXXXXX",
       "Sent from UjumbeSMS TypeScript client [Client Helpers Test]",
-      "UjumbeSMS"
+      "UjumbeSMS",
     );
 
     const helperResponse = await client.sendMessages(customRequest);
@@ -63,7 +63,7 @@ async function main() {
     // Check balance
     const balanceResponse = await client.balance();
     console.log(
-      `Credits: ${balanceResponse.meta?.credits}, Rate: ${balanceResponse.meta?.rate}`
+      `Credits: ${balanceResponse.meta?.credits}, Rate: ${balanceResponse.meta?.rate}`,
     );
 
     // Get message history

@@ -36,7 +36,7 @@ async function sendSms() {
     const response = await client.sendSingleMessage(
       "254712345678",
       "Hello from UjumbeSMS!",
-      "UjumbeSMS"
+      "UjumbeSMS",
     );
 
     console.log("Message sent successfully!");
@@ -75,7 +75,7 @@ Use the convenient `sendSingleMessage` method to send a message to one or more r
 const response = await client.sendSingleMessage(
   "254712345678,254712345678", // Multiple numbers separated by commas
   "Your message content here",
-  "SENDER_ID" // Your registered sender ID or default "UjumbeSMS"
+  "SENDER_ID", // Your registered sender ID or default "UjumbeSMS"
 );
 
 console.log(`Message sent to ${response.meta.recipients} recipients`);
@@ -99,7 +99,7 @@ addMessageBag(
   request,
   "07123456790,07123456791",
   "Second message content",
-  "SENDER_ID"
+  "SENDER_ID",
 );
 
 // Send the request
@@ -119,14 +119,14 @@ client.addMessageToRequest(
   request,
   "07123456789",
   "Message content",
-  "SENDER_ID"
+  "SENDER_ID",
 );
 
 client.addMessageToRequest(
   request,
   "254712345679",
   "Another message",
-  "SENDER_ID"
+  "SENDER_ID",
 );
 
 // Send the request
@@ -144,7 +144,7 @@ try {
   const response = await client.sendSingleMessage(
     "254712345679",
     "Message content",
-    "SENDER_ID"
+    "SENDER_ID",
   );
   console.log("Message sent successfully!");
 } catch (error) {
@@ -181,7 +181,7 @@ class UjumbeSmsClient {
   sendSingleMessage(
     numbers: string,
     message: string,
-    sender: string
+    sender: string,
   ): Promise<ApiResponse>;
 
   /**
@@ -196,7 +196,7 @@ class UjumbeSmsClient {
     request: MessageRequest,
     numbers: string,
     message: string,
-    sender: string
+    sender: string,
   ): MessageRequest;
 }
 ```
@@ -251,7 +251,7 @@ function addMessageBag(
   request: MessageRequest,
   numbers: string,
   message: string,
-  sender: string
+  sender: string,
 ): MessageRequest;
 ```
 
@@ -298,7 +298,7 @@ class UjumbeSmsError extends Error {
       code?: string;
       statusCode?: number;
       originalError?: unknown;
-    }
+    },
   );
 }
 ```
@@ -320,7 +320,7 @@ async function sendBasicMessage() {
     const response = await client.sendSingleMessage(
       "254712345679",
       "Hello from UjumbeSMS TypeScript client!",
-      "COMPANY" // default to UjumbeSMS if you dont have a Sender ID
+      "COMPANY", // default to UjumbeSMS if you dont have a Sender ID
     );
 
     console.log("Message sent successfully!");
@@ -355,14 +355,19 @@ async function sendMultipleMessages() {
     const request = createMessageRequest();
 
     // First message
-    addMessageBag(request, "254712345679", "First message content", "UjumbeSMS");
+    addMessageBag(
+      request,
+      "254712345679",
+      "First message content",
+      "UjumbeSMS",
+    );
 
     // Second message to multiple recipients
     addMessageBag(
       request,
       "254712345679,254712345679",
       "Second message content for multiple recipients",
-      "UjumbeSMS"
+      "UjumbeSMS",
     );
 
     const response = await client.sendMessages(request);

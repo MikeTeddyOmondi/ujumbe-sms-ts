@@ -40,7 +40,7 @@ export const DEFAULT_CONFIG: Partial<UjumbeSmsConfig> = {
  * @returns Complete configuration with defaults applied
  */
 export function createConfig(
-  config: UjumbeSmsConfig
+  config: UjumbeSmsConfig,
 ): Required<UjumbeSmsConfig> {
   return {
     ...DEFAULT_CONFIG,

@@ -1,7 +1,11 @@
 // src/__tests__/client.test.ts
-import { describe, it, expect, vi, beforeEach, Mocked } from 'vitest';
-import axios from 'axios';
-import { UjumbeSmsClient, createMessageRequest, addMessageBag } from '../index.ts';
+import { describe, it, expect, vi, beforeEach, Mocked } from "vitest";
+import axios from "axios";
+import {
+  UjumbeSmsClient,
+  createMessageRequest,
+  addMessageBag,
+} from "../index.ts";
 
 // Mock axios with proper TypeScript typing
 // vi.mock('axios');
@@ -46,28 +50,30 @@ describe("UjumbeSmsClient", () => {
       const response = await client.sendSingleMessage(
         "07123456789",
         "Single test message",
-        "UjumbeSMS"
+        "UjumbeSMS",
       );
 
       expect(response).toEqual(mockResponse.data);
       expect(mockedAxios.post).toHaveBeenCalledWith(
         "/api/messaging",
         {
-          data: [{
-            message_bag: {
-              numbers: "07123456789",
-              message: "Single test message",
-              sender: "UjumbeSMS"
-            }
-          }]
+          data: [
+            {
+              message_bag: {
+                numbers: "07123456789",
+                message: "Single test message",
+                sender: "UjumbeSMS",
+              },
+            },
+          ],
         },
         expect.objectContaining({
           headers: {
             "X-Authorization": "test_api_key",
-            "Email": "test@example.com",
-            "Content-Type": "application/json"
-          }
-        })
+            Email: "test@example.com",
+            "Content-Type": "application/json",
+          },
+        }),
       );
     });
 
@@ -77,20 +83,20 @@ describe("UjumbeSmsClient", () => {
           data: {
             status: {
               code: "1001",
-              description: "Invalid API credentials"
-            }
-          }
-        }
+              description: "Invalid API credentials",
+            },
+          },
+        },
       };
       mockedAxios.post.mockRejectedValue(errorResponse);
 
       const client = new UjumbeSmsClient({
         apiKey: "invalid_key",
-        email: "test@example.com"
+        email: "test@example.com",
       });
 
       await expect(
-        client.sendSingleMessage("07123456789", "Test", "Sender")
+        client.sendSingleMessage("07123456789", "Test", "Sender"),
       ).rejects.toThrow("Invalid API credentials");
     });
   });
@@ -100,14 +106,14 @@ describe("UjumbeSmsClient", () => {
       const mockResponse = {
         data: {
           status: { code: "1008", description: "Queued" },
-          meta: { recipients: 3 }
-        }
+          meta: { recipients: 3 },
+        },
       };
       // mockedAxios.post.mockResolvedValue(mockResponse);
 
       const client = new UjumbeSmsClient({
         apiKey: "test_key",
-        email: "test@example.com"
+        email: "test@example.com",
       });
 
       const request = createMessageRequest();
@@ -115,16 +121,28 @@ describe("UjumbeSmsClient", () => {
       addMessageBag(request, "0722222222", "Second", "Sender2");
 
       await client.sendMessages(request);
-      
+
       expect(mockedAxios.post).toHaveBeenCalledWith(
         "/api/messaging",
         {
           data: [
-            { message_bag: { numbers: "07123456789", message: "First", sender: "Sender1" } },
-            { message_bag: { numbers: "0722222222", message: "Second", sender: "Sender2" } }
-          ]
+            {
+              message_bag: {
+                numbers: "07123456789",
+                message: "First",
+                sender: "Sender1",
+              },
+            },
+            {
+              message_bag: {
+                numbers: "0722222222",
+                message: "Second",
+                sender: "Sender2",
+              },
+            },
+          ],
         },
-        expect.anything()
+        expect.anything(),
       );
     });
   });

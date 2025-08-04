@@ -6,7 +6,7 @@
     "outDir": "./dist",
     "allowImportingTsExtensions": true,
     "emitDeclarationOnly": true,
-    "noEmit": true,
+    "noEmit": true
   },
   "include": ["src/**/*"]
 }
