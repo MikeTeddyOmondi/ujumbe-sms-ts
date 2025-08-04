@@ -1,17 +1,29 @@
 // src/client.ts
 import axios, { AxiosError, AxiosInstance } from "axios";
 import {
-  ApiResponse,
+  MessagingApiResponse,
   MessageRequest,
+  BalanceApiResponse,
+  MessageHistoryApiResponse,
   createMessageRequest,
   addMessageBag,
-} from "./models";
-import { UjumbeSmsConfig, createConfig } from "./config";
+  ApiResponse,
+} from "./models.ts";
+import { UjumbeSmsConfig, createConfig } from "./config.ts";
 import {
   createNetworkError,
   createApiError,
   createValidationError,
-} from "./errors";
+} from "./errors.ts";
+
+/**
+ * API endpoints for UjumbeSMS
+ */
+enum ApiEndpoint {
+  MESSAGING = "/api/messaging",
+  BALANCE = "/api/balance",
+  MESSAGES = "/api/messages",
+}
 
 /**
  * Client for interacting with the UjumbeSMS API
@@ -19,7 +31,6 @@ import {
 export class UjumbeSmsClient {
   private readonly config: Required<UjumbeSmsConfig>;
   private readonly httpClient: AxiosInstance;
-  private readonly API_MESSAGING_ENDPOINT = "/api/messaging";
 
   /**
    * Creates a new UjumbeSMS client
@@ -40,6 +51,56 @@ export class UjumbeSmsClient {
   }
 
   /**
+   * Creates headers with authentication
+   */
+  private getAuthHeaders() {
+    return {
+      "X-Authorization": this.config.apiKey,
+      email: this.config.email,
+    };
+  }
+
+  /**
+   * Handles API errors consistently
+   */
+  private handleApiError(error: unknown): never {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+
+      // Handle API errors
+      if (axiosError.response) {
+        const statusCode = axiosError.response.status;
+        let errorMessage = "API request failed";
+        let errorCode: string | undefined;
+
+        // Try to extract error details from response
+        if (axiosError.response.data) {
+          try {
+            const errorData = axiosError.response.data as any;
+            if (errorData.status?.description) {
+              errorMessage = errorData.status.description;
+            }
+            if (errorData.status?.code) {
+              errorCode = errorData.status.code;
+            }
+          } catch {
+            // If we can't parse the error response, use the status text
+            errorMessage = axiosError.response.statusText || errorMessage;
+          }
+        }
+
+        throw createApiError(statusCode, errorCode, errorMessage);
+      }
+
+      // Handle network errors
+      throw createNetworkError(axiosError);
+    }
+
+    // Handle other errors
+    throw createNetworkError(error);
+  }
+
+  /**
    * Sends one or more messages using the UjumbeSMS API
    *
    * @param request - Message request containing one or more message bags
@@ -55,14 +116,11 @@ export class UjumbeSmsClient {
         );
       }
 
-      const response = await this.httpClient.post<ApiResponse>(
-        this.API_MESSAGING_ENDPOINT,
+      const response = await this.httpClient.post<MessagingApiResponse>(
+        ApiEndpoint.MESSAGING,
         request,
         {
-          headers: {
-            "X-Authorization": this.config.apiKey,
-            email: this.config.email,
-          },
+          headers: this.getAuthHeaders(),
         }
       );
 
@@ -70,40 +128,51 @@ export class UjumbeSmsClient {
 
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError;
+      this.handleApiError(error);
+    }
+  }
 
-        // Handle API errors
-        if (axiosError.response) {
-          const statusCode = axiosError.response.status;
-          let errorMessage = "API request failed";
-          let errorCode: string | undefined;
-
-          // Try to extract error details from response
-          if (axiosError.response.data) {
-            try {
-              const errorData = axiosError.response.data as any;
-              if (errorData.status?.description) {
-                errorMessage = errorData.status.description;
-              }
-              if (errorData.status?.code) {
-                errorCode = errorData.status.code;
-              }
-            } catch {
-              // If we can't parse the error response, use the status text
-              errorMessage = axiosError.response.statusText || errorMessage;
-            }
-          }
-
-          throw createApiError(statusCode, errorCode, errorMessage);
+  /**
+   * Gets account balance using the UjumbeSMS API
+   *
+   * @returns Balance API response
+   * @throws {UjumbeSmsError} if the request fails
+   */
+  public async balance(): Promise<BalanceApiResponse> {
+    try {
+      const response = await this.httpClient.post<BalanceApiResponse>(
+        ApiEndpoint.BALANCE,
+        {},
+        {
+          headers: this.getAuthHeaders(),
         }
+      );
 
-        // Handle network errors
-        throw createNetworkError(axiosError);
-      }
+      return response.data;
+    } catch (error) {
+      this.handleApiError(error);
+    }
+  }
 
-      // Handle other errors
-      throw createNetworkError(error);
+  /**
+   * Gets messages history using the UjumbeSMS API
+   *
+   * @returns Message history API response
+   * @throws {UjumbeSmsError} if the request fails
+   */
+  public async getMessagesHistory(): Promise<MessageHistoryApiResponse> {
+    try {
+      const response = await this.httpClient.post<MessageHistoryApiResponse>(
+        ApiEndpoint.MESSAGES,
+        {},
+        {
+          headers: this.getAuthHeaders(),
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      this.handleApiError(error);
     }
   }
 
@@ -119,7 +188,7 @@ export class UjumbeSmsClient {
     numbers: string,
     message: string,
     sender: string
-  ): Promise<ApiResponse> {
+  ): Promise<MessagingApiResponse> {
     const request = createMessageRequest();
     addMessageBag(request, numbers, message, sender);
     return this.sendMessages(request);

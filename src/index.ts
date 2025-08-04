@@ -1,5 +1,5 @@
 // src/index.ts
-export * from './client';
-export * from './config';
-export * from './models';
-export * from './errors';
+export * from './client.ts';
+export * from './config.ts';
+export * from './models.ts';
+export * from './errors.ts';

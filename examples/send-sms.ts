@@ -1,6 +1,11 @@
 // examples/send-sms.ts
 import { config } from "dotenv";
-import { UjumbeSmsClient, createMessageRequest, addMessageBag } from "../src";
+import {
+  UjumbeSmsClient,
+  createMessageRequest,
+  addMessageBag,
+  MessageHistoryUtils,
+} from "../src";
 
 config();
 
@@ -14,7 +19,7 @@ async function main() {
   try {
     // Option 1: Using the convenience method for a single message
     const singleResponse = await client.sendSingleMessage(
-      "254717135176,254790378969",
+      "254xxxxxxxxx,254xxxxxxxxx",
       "Sent from UjumbeSMS TypeScript client!",
       "UjumbeSMS"
     );
@@ -55,7 +60,20 @@ async function main() {
     const helperResponse = await client.sendMessages(customRequest);
     console.log("Helper methods response:", helperResponse);
 
-    console.log("Credits remaining:", helperResponse.meta.available_credits);
+    // Check balance
+    const balanceResponse = await client.balance();
+    console.log(
+      `Credits: ${balanceResponse.meta?.credits}, Rate: ${balanceResponse.meta?.rate}`
+    );
+
+    // Get message history
+    const historyResponse = await client.getMessagesHistory();
+    console.log(`Found ${historyResponse.items.total} messages`);
+
+    // Get message history with utilities
+    const delivered = MessageHistoryUtils.getDeliveredMessages(historyResponse);
+    const failed = MessageHistoryUtils.getFailedMessages(historyResponse);
+    console.log(`Delivered: ${delivered.length}, Failed: ${failed.length}`);
   } catch (error) {
     if (error instanceof Error) {
       console.error("Error sending SMS:", error.message);

@@ -1,7 +1,7 @@
 // src/__tests__/client.test.ts
 import { describe, it, expect, vi, beforeEach, Mocked } from 'vitest';
 import axios from 'axios';
-import { UjumbeSmsClient, createMessageRequest, addMessageBag } from '../index';
+import { UjumbeSmsClient, createMessageRequest, addMessageBag } from '../index.ts';
 
 // Mock axios with proper TypeScript typing
 // vi.mock('axios');
